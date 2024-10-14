@@ -16,8 +16,8 @@ defmodule Timemanager.WorkTimes.WorkingTime do
   @doc false
   def changeset(working_time, attrs) do
     working_time
-    |> cast(attrs, [:start, :end, :user_id])
-    |> validate_required([:start, :end, :user_id])
+    |> cast(attrs, [:start, :end, :user_id, :working_type, :repetitive])
+    |> validate_required([:start, :end, :user_id, :working_type])
     # |> validate_end_after_start()
     |> foreign_key_constraint(:user_id)
   end

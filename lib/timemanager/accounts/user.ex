@@ -16,7 +16,7 @@ defmodule Timemanager.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :email, :role_id, :team_id])
+    |> cast(attrs, [:username, :email, :role_id, :team_id, :img_url])
     |> validate_required([:username, :email])
     |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/, message: "must be a valid email address")
     |> unique_constraint(:email)
