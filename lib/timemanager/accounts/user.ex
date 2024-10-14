@@ -1,4 +1,5 @@
 defmodule Timemanager.Accounts.User do
+  alias TimemanagerWeb.Guardian
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,6 +7,8 @@ defmodule Timemanager.Accounts.User do
   schema "users" do
     field :username, :string
     field :email, :string
+    field :password, :string, virtual: true
+    field :hashed_password, :string
     belongs_to :role, Timemanager.Role
     belongs_to :team, Timemanager.Accounts.Team, foreign_key: :team_id
 
@@ -23,6 +26,7 @@ defmodule Timemanager.Accounts.User do
     |> put_default_team()
     |> assoc_constraint(:role)
     |> assoc_constraint(:team)
+    |> hash_password()
   end
 
   # Helper function to set the default role to 1 (Employee)
@@ -36,6 +40,14 @@ defmodule Timemanager.Accounts.User do
     case get_field(changeset, :team_id) do
       nil -> put_change(changeset, :team_id, 1)
       _ -> changeset
+    end
+  end
+
+
+  defp hash_password(changeset) do
+    case get_change(changeset, :password) do
+      nil -> changeset
+      password -> put_change(changeset, :hashed_password, Guardian.hash_password(password))
     end
   end
 end

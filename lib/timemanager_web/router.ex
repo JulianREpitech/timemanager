@@ -7,11 +7,22 @@ defmodule TimemanagerWeb.Router do
     plug :fetch_flash
     plug CORSPlug
   end
+  pipeline :auth do
+    plug Guardian.Plug.Pipeline,
+      module: TimemanagerWeb.Guardian,
+      error_handler: TimemanagerWeb.AuthErrorHandler
+
+    plug Guardian.Plug.VerifyHeader, realm: "Bearer"
+    plug Guardian.Plug.EnsureAuthenticated
+    plug Guardian.Plug.LoadResource
+  end
 
   scope "/api", TimemanagerWeb do
     pipe_through :api
-
     resources "/users", UserController, except: [:new, :edit]
+    post "/login", UserController, :login
+
+    pipe_through :auth
 
     get "/roles", RoleController, :index   # Liste tous les rôles
     get "/roles/:id", RoleController, :show # Récupère un rôle par son ID

@@ -9,6 +9,28 @@ defmodule Timemanager.Accounts do
   alias Timemanager.Accounts.User
   alias Timemanager.Accounts.Team
   alias Timemanager.Role
+  alias TimemanagerWeb.Guardian
+
+  def authenticate_user(email, password) do
+    user = Repo.get_by(User, email: email)
+
+    case user do
+      nil ->
+        {:error, :invalid_credentials}
+
+      _user ->
+        if Guardian.hash_password(password) == user.hashed_password do
+          case Guardian.encode_and_sign(user) do
+            {:ok, token, claims} ->
+              {:ok, token, claims}
+            {:error, reason} ->
+              {:error, reason}
+          end
+        else
+          {:error, :invalid_credentials}
+        end
+    end
+  end
 
   @doc """
   Returns the list of users.

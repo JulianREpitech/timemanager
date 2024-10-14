@@ -1,4 +1,5 @@
 defmodule TimemanagerWeb.UserController do
+alias TimemanagerWeb.Guardian
   use TimemanagerWeb, :controller
 
   alias Timemanager.Accounts
@@ -7,6 +8,7 @@ defmodule TimemanagerWeb.UserController do
   action_fallback TimemanagerWeb.FallbackController
 
   def index(conn, params) do
+    IO.puts(Guardian.hash_password("test"))
     users = Accounts.list_users(params)
     render(conn, :index, users: users)
   end
@@ -48,6 +50,19 @@ defmodule TimemanagerWeb.UserController do
 
     with {:ok, %User{}} <- Accounts.delete_user(user) do
       send_resp(conn, :no_content, "")
+    end
+  end
+
+
+  def login(conn, %{"email" => email, "password" => password}) do
+    case Accounts.authenticate_user(email, password) do
+      {:ok, token, _claims} ->
+        conn
+        |> json(%{token: token})
+      {:error, _reason} ->
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: "Invalid credentials"})
     end
   end
 end
