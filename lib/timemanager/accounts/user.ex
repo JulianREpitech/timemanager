@@ -2,12 +2,13 @@ defmodule Timemanager.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, only: [:id, :username, :email]}
+  @derive {Jason.Encoder, only: [:id, :username, :email, :img_url]}
   schema "users" do
     field :username, :string
     field :email, :string
     belongs_to :role, Timemanager.Role
     belongs_to :team, Timemanager.Accounts.Team, foreign_key: :team_id
+    field :img_url, :string
 
     timestamps(type: :utc_datetime)
   end

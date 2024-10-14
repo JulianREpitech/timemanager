@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :timemanager, Timemanager.Repo,
   username: "postgres",
-  password: "2004",
+  password: "postgres",
   hostname: "localhost",
   database: "timemanager_dev",
   stacktrace: true,
